@@ -1,0 +1,1 @@
+# Local-Food-Wastage-Management-System-Project
