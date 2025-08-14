@@ -1,6 +1,6 @@
 # Local-Food-Wastage-Management-System-Project
 
-# 🍽️ Local Food Donation Dashboard
+## 🍽️ Local Food Donation Dashboard
 
 A Streamlit-based dashboard to manage and analyze local food donations, built with PostgreSQL as the backend database.  
 The app allows users to view food listings, apply filters, contact providers, run SQL analyses, and perform CRUD operations on Providers, Food Listings, and Claims.
@@ -153,6 +153,14 @@ pandas
 ```
 
 ---
+## 📬 Contact
 
+**Isha Chaudhary**
+
+📧 [ishachaudhary3928@gmail.com](mailto:ishachaudhary3928@gmail.com)
+
+🔗 [LinkedIn](https://www.linkedin.com/in/ishachaudhary18)
+
+📍 Noida, India
 
 ```
