@@ -27,14 +27,6 @@ def exec_write(sql, params=None):
     with engine.begin() as conn:
         conn.execute(text(sql), params or {})
 
-# ---- HEALTH CHECK ----
-try:
-    with engine.connect() as conn:
-        conn.execute(text("SELECT 1"))
-    st.success("✅ Database connection successful!")
-except Exception as e:
-    st.error(f"❌ Database connection failed: {e}")
-
 # ---- LOAD CSVS INTO DATABASE ----
 def load_csv_if_empty(table_name, csv_file):
     """Load CSV into Neon only if table is empty."""
@@ -237,4 +229,5 @@ with tab3:
     if st.button("Delete Claim", key="del_claim_btn"):
         exec_write("DELETE FROM claims WHERE claim_id=:id;", {"id": del_claim})
         st.warning("Claim deleted.")
+
 
