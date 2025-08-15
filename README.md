@@ -43,11 +43,12 @@ Manage data directly from the dashboard:
 ## 🗂️ Project Structure
 
 ```
-
-.
-├── app.py          # Main Streamlit application
-├── requirements.txt # Python dependencies
-└── README.md        # Project documentation
+Local-Food-Wastage-Management-System-Project/
+│── app.py                # Main Streamlit application
+│── requirements.txt      # Python dependencies
+│── .streamlit/            
+│     └── secrets.toml    # Neon Database URL
+└── README.md             # Project documentation
 
 ````
 
@@ -75,23 +76,8 @@ venv\Scripts\activate      # Windows
 pip install -r requirements.txt
 ```
 
-### 4️⃣ Configure Database
 
-Create a PostgreSQL database (default name: `food_wastage`).
-
-Update environment variables in your system or `.env` file:
-
-```env
-DB_USER=postgres
-DB_PASS=your_password
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=food_wastage
-```
-
-Alternatively, edit directly in `app.py`.
-
-### 5️⃣ Run database migrations / schema
+### 4️⃣ Run database migrations / schema
 
 Example schema:
 
@@ -133,7 +119,7 @@ CREATE TABLE claims (
 );
 ```
 
-### 6️⃣ Run the app
+### 5️⃣ Run the app
 
 ```bash
 streamlit run app.py
