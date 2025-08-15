@@ -57,12 +57,6 @@ csv_files = {
     "claims": os.path.join(base_path, "claims_clean_dataset.csv")
 }
 
-for table, path in csv_files.items():
-    if os.path.exists(path):
-        load_csv_if_empty(table, path)
-    else:
-        st.warning(f"⚠️ CSV for {table} not found at {path}")
-
 # ---- PAGE TITLE ----
 st.title("🍽️ Local Food Donation Dashboard")
 st.caption("Filter donations, view contacts, run analyses, and perform CRUD operations.")
@@ -243,3 +237,4 @@ with tab3:
     if st.button("Delete Claim", key="del_claim_btn"):
         exec_write("DELETE FROM claims WHERE claim_id=:id;", {"id": del_claim})
         st.warning("Claim deleted.")
+
