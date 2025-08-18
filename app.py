@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import streamlit as st
 from sqlalchemy import create_engine, text
+import plotly.express as px
 
 # ---- PAGE CONFIG ----
 st.set_page_config(page_title="Local Food Donation Dashboard", layout="wide")
@@ -51,7 +52,7 @@ csv_files = {
 
 # ---- PAGE TITLE ----
 st.title("🍽️ Local Food Donation Dashboard")
-st.caption("Filter donations, view contacts, run analyses, and perform CRUD operations.")
+st.caption("Filter donations, view contacts, run analyses, visualize results, and perform CRUD operations.")
 
 # ---- SIDEBAR FILTERS ----
 st.sidebar.header("Filters")
@@ -103,6 +104,7 @@ def get_filtered_food_listings(city, provider, food_type, meal_type):
     return q(sql, params)
 
 listings = get_filtered_food_listings(city, provider, food_type, meal_type)
+st.subheader("📋 Available Food Listings")
 st.dataframe(listings, use_container_width=True)
 
 # ---- CONTACT PROVIDERS ----
@@ -118,19 +120,19 @@ st.subheader("📊 SQL Analyses")
 query_map = {
     "Providers per city": 'SELECT city, COUNT(*) AS provider_count FROM providers GROUP BY city ORDER BY provider_count DESC;',
     "Receivers per city": 'SELECT city, COUNT(*) AS receiver_count FROM receivers GROUP BY city ORDER BY receiver_count DESC;',
-    "Top provider type by quantity": 'SELECT provider_type, SUM(quantity) AS total_quantity FROM food_listings GROUP BY provider_type ORDER BY total_quantity DESC LIMIT 1;',
+    "Top provider type by quantity": 'SELECT provider_type, SUM(quantity) AS total_quantity FROM food_listings GROUP BY provider_type ORDER BY total_quantity DESC;',
     "Provider contacts by city": 'SELECT name, contact FROM providers WHERE city = :city ORDER BY name;',
     "Top receiver by claims": 'SELECT r.receiver_id, r.name, COUNT(c.claim_id) AS total_claims FROM claims c JOIN receivers r ON c.receiver_id = r.receiver_id GROUP BY r.receiver_id, r.name ORDER BY total_claims DESC LIMIT 1;',
-    "Total available quantity (not expired)": 'SELECT SUM(quantity) AS total_available FROM food_listings WHERE expiry_date >= CURRENT_DATE;',
-    "City with most food listings": 'SELECT location AS city, COUNT(*) AS listings_count FROM food_listings GROUP BY location ORDER BY listings_count DESC LIMIT 1;',
+    "Total available quantity (not expired)": 'SELECT SUM(quantity) AS total_available FROM food_listings;',
+    "City with most food listings": 'SELECT location AS city, COUNT(*) AS listings_count FROM food_listings GROUP BY location ORDER BY listings_count DESC;',
     "Most common food types": 'SELECT food_type, COUNT(*) AS count_type FROM food_listings GROUP BY food_type ORDER BY count_type DESC;',
     "Claims per food item": 'SELECT f.food_id, f.food_name, COUNT(c.claim_id) AS claims_count FROM food_listings f LEFT JOIN claims c ON f.food_id = c.food_id GROUP BY f.food_id, f.food_name ORDER BY claims_count DESC;',
-    "Top provider by successful claims": 'SELECT p.provider_id, p.name, COUNT(c.claim_id) AS successful_claims FROM claims c JOIN food_listings f ON c.food_id = f.food_id JOIN providers p ON f.provider_id = p.provider_id WHERE c.status = \'Completed\' GROUP BY p.provider_id, p.name ORDER BY successful_claims DESC LIMIT 1;',
+    "Top provider by successful claims": 'SELECT p.provider_id, p.name, COUNT(c.claim_id) AS successful_claims FROM claims c JOIN food_listings f ON c.food_id = f.food_id JOIN providers p ON f.provider_id = p.provider_id WHERE c.status = \'Completed\' GROUP BY p.provider_id, p.name ORDER BY successful_claims DESC;',
     "Percentage of claim statuses": 'SELECT status, ROUND((COUNT(*) * 100.0)/(SELECT COUNT(*) FROM claims),2) AS percentage FROM claims GROUP BY status;',
     "Average quantity claimed per receiver": 'SELECT r.receiver_id, r.name, ROUND(AVG(f.quantity),2) AS avg_quantity FROM claims c JOIN food_listings f ON c.food_id = f.food_id JOIN receivers r ON c.receiver_id = r.receiver_id GROUP BY r.receiver_id, r.name ORDER BY avg_quantity DESC;',
-    "Most claimed meal type": 'SELECT f.meal_type, COUNT(c.claim_id) AS claims_count FROM claims c JOIN food_listings f ON c.food_id = f.food_id GROUP BY f.meal_type ORDER BY claims_count DESC LIMIT 1;',
+    "Most claimed meal type": 'SELECT f.meal_type, COUNT(c.claim_id) AS claims_count FROM claims c JOIN food_listings f ON c.food_id = f.food_id GROUP BY f.meal_type ORDER BY claims_count DESC;',
     "Total quantity donated by each provider": 'SELECT p.provider_id, p.name, SUM(f.quantity) AS total_donated FROM food_listings f JOIN providers p ON f.provider_id = p.provider_id GROUP BY p.provider_id, p.name ORDER BY total_donated DESC;',
-    "Expired but unclaimed food items": 'SELECT f.food_id, f.food_name, f.expiry_date, f.quantity FROM food_listings f LEFT JOIN claims c ON f.food_id = c.food_id WHERE f.expiry_date < CURRENT_DATE AND c.claim_id IS NULL;'
+    "Expired but unclaimed food items": 'SELECT f.food_id, f.food_name, f.expiry_date, f.quantity FROM food_listings f LEFT JOIN claims c ON f.food_id = c.food_id WHERE c.claim_id IS NULL;'
 }
 
 chosen = st.selectbox("Choose an analysis", list(query_map.keys()))
@@ -139,6 +141,54 @@ if chosen == "Provider contacts by city":
 else:
     df = q(query_map[chosen])
 st.dataframe(df, use_container_width=True)
+
+# ---- VISUALIZATIONS ----
+if not df.empty:
+    if chosen in ["Providers per city", "Receivers per city"]:
+        fig = px.bar(df, x="city", y=df.columns[1], color="city",
+                     title=f"{chosen}", text_auto=True)
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif chosen == "Top provider type by quantity":
+        fig = px.pie(df, names="provider_type", values="total_quantity",
+                     title="Contribution by Provider Type")
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif chosen == "Most common food types":
+        fig = px.bar(df, x="food_type", y="count_type", color="food_type",
+                     title="Most Common Food Types", text_auto=True)
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif chosen == "Claims per food item":
+        fig = px.bar(df.head(10), x="food_name", y="claims_count", color="food_name",
+                     title="Top 10 Food Items by Claims", text_auto=True)
+        st.plotly_chart(fig, use_container_width=True)
+    
+
+    elif chosen == "Percentage of claim statuses":
+        fig = px.pie(df, names="status", values="percentage",
+                     title="Claim Status Distribution (%)")
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif chosen == "Most claimed meal type":
+        fig = px.bar(df, x="meal_type", y="claims_count", color="meal_type",
+                     title="Most Claimed Meal Type", text_auto=True)
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif chosen == "Total quantity donated by each provider":
+        fig = px.bar(df.head(10), x="name", y="total_donated", color="total_donated",
+                     title="Top Providers by Total Donations", text_auto=True)
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif chosen == "City with most food listings":
+        fig = px.bar(df, x="city", y="listings_count", color="city",
+                     title="City with Most Listings", text_auto=True)
+        st.plotly_chart(fig, use_container_width=True)
+
+    elif chosen == "Expired but unclaimed food items":
+        fig = px.bar(df.head(10), x ="food_name", y="quantity", color="food_name",
+                     title="Top unclaimed food items By Quantity",text_auto=True)
+        st.plotly_chart(fig, use_container_width=True) 
 
 # ---- CRUD OPERATIONS ----
 st.subheader("🛠️ CRUD Operations")
@@ -229,5 +279,7 @@ with tab3:
     if st.button("Delete Claim", key="del_claim_btn"):
         exec_write("DELETE FROM claims WHERE claim_id=:id;", {"id": del_claim})
         st.warning("Claim deleted.")
+
+
 
 
