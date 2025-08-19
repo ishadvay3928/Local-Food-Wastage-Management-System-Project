@@ -121,7 +121,6 @@ query_map = {
     "Providers per city": 'SELECT city, COUNT(*) AS provider_count FROM providers GROUP BY city ORDER BY provider_count DESC;',
     "Receivers per city": 'SELECT city, COUNT(*) AS receiver_count FROM receivers GROUP BY city ORDER BY receiver_count DESC;',
     "Top provider type by quantity": 'SELECT provider_type, SUM(quantity) AS total_quantity FROM food_listings GROUP BY provider_type ORDER BY total_quantity DESC;',
-    "Provider contacts by city": 'SELECT name, contact FROM providers WHERE City = 'New Jessica' ORDER BY name;',
     "Top receiver by claims": 'SELECT r.receiver_id, r.name, COUNT(c.claim_id) AS total_claims FROM claims c JOIN receivers r ON c.receiver_id = r.receiver_id GROUP BY r.receiver_id, r.name ORDER BY total_claims DESC LIMIT 1;',
     "Total available quantity (not expired)": 'SELECT SUM(quantity) AS total_available FROM food_listings;',
     "City with most food listings": 'SELECT location AS city, COUNT(*) AS listings_count FROM food_listings GROUP BY location ORDER BY listings_count DESC;',
@@ -279,6 +278,7 @@ with tab3:
     if st.button("Delete Claim", key="del_claim_btn"):
         exec_write("DELETE FROM claims WHERE claim_id=:id;", {"id": del_claim})
         st.warning("Claim deleted.")
+
 
 
 
