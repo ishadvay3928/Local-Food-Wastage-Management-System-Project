@@ -2,41 +2,47 @@
 
 ## 🍽️ Local Food Donation Dashboard
 
-A Streamlit-based dashboard to manage and analyze local food donations, built with PostgreSQL as the backend database.  
-The app allows users to view food listings, apply filters, contact providers, run SQL analyses, and perform CRUD operations on Providers, Food Listings, and Claims.
+A Streamlit-based dashboard to manage and analyze local food donations, now fully compatible with **SQLite**.
+The app allows users to view food listings, apply filters, contact providers, run analyses, and perform CRUD operations on Providers, Food Listings, and Claims.
 
 ---
 
 ## 🚀 Features
 
 ### 🔎 Filters
-- Filter food listings by **City**, **Provider**, **Food Type**, and **Meal Type**
-- Only show listings with expiry date `>= CURRENT_DATE`
+
+* Filter food listings by **City**, **Provider**, **Food Type**, and **Meal Type**
+* Only show listings with expiry date `>= CURRENT_DATE` (or current date in SQLite)
 
 ### 📋 Food Listings
-- View available food items with quantity, expiry date, and provider details
-- Real-time filtering updates
-- Contact providers directly from the current filtered results
+
+* View available food items with quantity, expiry date, and provider details
+* Real-time filtering updates
+* Contact providers directly from the filtered results
 
 ### 📊 SQL Analyses
+
 Pre-built analysis queries, including:
-- Providers per city
-- Receivers per city
-- Top provider type by donated quantity
-- Provider contacts by city
-- Top receiver by claims
-- Total available (not expired) food
-- Most common food types
-- Claims per food item
-- Percentage of claim statuses
-- Expired but unclaimed items  
-…and more!
+
+* Providers per city
+* Receivers per city
+* Top provider type by donated quantity
+* Top receiver by claims
+* Total available (not expired) food
+* Most common food types
+* Claims per food item
+* Percentage of claim statuses
+* Expired but unclaimed items
+  …and more!
 
 ### 🛠️ CRUD Operations
+
 Manage data directly from the dashboard:
-- **Providers**: Create, update, or delete provider details
-- **Food Listings**: Create, update (quantity), or delete listings
-- **Claims**: Create, update, or delete claims
+
+* **Providers**: Create, update, or delete provider details
+* **Recievers**: Create, update, or delete recievers details
+* **Food Listings**: Create, update (quantity), or delete listings
+* **Claims**: Create, update, or delete claims
 
 ---
 
@@ -44,25 +50,24 @@ Manage data directly from the dashboard:
 
 ```
 Local-Food-Wastage-Management-System-Project/
-│── app.py                # Main Streamlit application
-│── requirements.txt      # Python dependencies
-│── .streamlit/            
-│     └── secrets.toml    # Neon Database URL
-└── README.md             # Project documentation
-
-````
+│── app.py                  # Main Streamlit application
+│── clean_datasets/          # CSV datasets (used if DB is empty)
+│── requirements.txt         # Python dependencies
+└── README.md               # Project documentation
+```
 
 ---
 
 ## 🛠️ Installation & Setup
 
 ### 1️⃣ Clone the repository
+
 ```bash
 git clone https://github.com/yourusername/local-food-donation-dashboard.git
 cd local-food-donation-dashboard
-````
+```
 
-### 2️⃣ Create and activate virtual environment
+### 2️⃣ Create and activate a virtual environment
 
 ```bash
 python -m venv venv
@@ -76,14 +81,18 @@ venv\Scripts\activate      # Windows
 pip install -r requirements.txt
 ```
 
+### 4️⃣ Database setup
 
-### 4️⃣ Run database migrations / schema
+The app supports **SQLite** by default:
 
-Example schema:
+* If `local_food_donation.db` exists, it will be used directly.
+* If the DB is missing or empty, CSVs in `clean_datasets/` will be loaded automatically.
+
+Example SQLite schema:
 
 ```sql
 CREATE TABLE providers (
-    provider_id SERIAL PRIMARY KEY,
+    provider_id INTEGER PRIMARY KEY,
     name TEXT,
     type TEXT,
     address TEXT,
@@ -92,11 +101,11 @@ CREATE TABLE providers (
 );
 
 CREATE TABLE food_listings (
-    food_id SERIAL PRIMARY KEY,
+    food_id INTEGER PRIMARY KEY,
     food_name TEXT,
-    quantity INT,
+    quantity INTEGER,
     expiry_date DATE,
-    provider_id INT REFERENCES providers(provider_id) ON DELETE CASCADE,
+    provider_id INTEGER REFERENCES providers(provider_id) ON DELETE CASCADE,
     provider_type TEXT,
     location TEXT,
     food_type TEXT,
@@ -104,20 +113,22 @@ CREATE TABLE food_listings (
 );
 
 CREATE TABLE receivers (
-    receiver_id SERIAL PRIMARY KEY,
+    receiver_id INTEGER PRIMARY KEY,
     name TEXT,
     city TEXT,
     contact TEXT
 );
 
 CREATE TABLE claims (
-    claim_id SERIAL PRIMARY KEY,
-    food_id INT REFERENCES food_listings(food_id) ON DELETE CASCADE,
-    receiver_id INT REFERENCES receivers(receiver_id) ON DELETE CASCADE,
+    claim_id INTEGER PRIMARY KEY,
+    food_id INTEGER REFERENCES food_listings(food_id) ON DELETE CASCADE,
+    receiver_id INTEGER REFERENCES receivers(receiver_id) ON DELETE CASCADE,
     status TEXT,
-    "timestamp" DATE
+    timestamp DATE
 );
 ```
+
+---
 
 ### 5️⃣ Run the app
 
@@ -134,19 +145,16 @@ streamlit run app.py
 ```
 streamlit
 sqlalchemy
-psycopg2-binary
 pandas
+plotly
 ```
 
 ---
+
 ## 📬 Contact
 
 **Isha Chaudhary**
-
 📧 [ishachaudhary3928@gmail.com](mailto:ishachaudhary3928@gmail.com)
-
 🔗 [LinkedIn](https://www.linkedin.com/in/ishachaudhary18)
-
 📍 Noida, India
 
-```
