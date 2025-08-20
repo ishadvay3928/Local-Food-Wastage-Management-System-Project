@@ -9,8 +9,13 @@ import plotly.express as px
 st.set_page_config(page_title="Local Food Donation Dashboard", layout="wide")
 
 # ---- DATABASE CONNECTION ----
-DATABASE_URL = st.secrets["DATABASE_URL"]
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+
+LOCAL_DB_URL = f"postgresql+psycopg2://{st.secrets['local_postgres']['user']}:{st.secrets['local_postgres']['password']}@" \
+               f"{st.secrets['local_postgres']['host']}:{st.secrets['local_postgres']['port']}/" \
+               f"{st.secrets['local_postgres']['dbname']}"
+
+engine = create_engine(LOCAL_DB_URL, pool_pre_ping=True)
+
 
 # ---- QUERY FUNCTIONS ----
 @st.cache_data(ttl=60)
@@ -278,6 +283,7 @@ with tab3:
     if st.button("Delete Claim", key="del_claim_btn"):
         exec_write("DELETE FROM claims WHERE claim_id=:id;", {"id": del_claim})
         st.warning("Claim deleted.")
+
 
 
 
