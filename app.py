@@ -123,7 +123,7 @@ st.subheader("📊 SQL Analyses")
 query_map = {
     "Providers per city": 'SELECT city, COUNT(*) AS provider_count FROM providers GROUP BY city ORDER BY provider_count DESC;',
     "Receivers per city": 'SELECT city, COUNT(*) AS receiver_count FROM receivers GROUP BY city ORDER BY receiver_count DESC;',
-    "Top provider type by quantity": 'SELECT type AS provider_type, SUM(quantity) AS total_quantity FROM food_listings GROUP BY type ORDER BY total_quantity DESC;',
+    "Top provider type by quantity": 'SELECT provider_type, SUM(quantity) AS total_quantity FROM food_listings GROUP BY provider_type ORDER BY total_quantity DESC;',
     "Top receiver by claims": '''
         SELECT r.receiver_id, r.name, COUNT(c.claim_id) AS total_claims
         FROM claims c 
@@ -317,6 +317,7 @@ with tab3:
     if st.button("Delete Claim", key="del_claim_btn"):
         exec_write("DELETE FROM claims WHERE claim_id=:id;", {"id": del_claim})
         st.warning("Claim deleted.")
+
 
 
 
