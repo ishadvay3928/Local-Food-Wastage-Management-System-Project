@@ -40,7 +40,6 @@ Pre-built analysis queries, including:
 Manage data directly from the dashboard:
 
 * **Providers**: Create, update, or delete provider details
-* **Recievers**: Create, update, or delete recievers details
 * **Food Listings**: Create, update (quantity), or delete listings
 * **Claims**: Create, update, or delete claims
 
