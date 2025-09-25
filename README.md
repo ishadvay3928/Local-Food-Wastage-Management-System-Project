@@ -5,6 +5,8 @@
 A Streamlit-based dashboard to manage and analyze local food donations, now fully compatible with **SQLite**.
 The app allows users to view food listings, apply filters, contact providers, run analyses, and perform CRUD operations on Providers, Food Listings, and Claims.
 
+🔗 **Live App**: [Local Food Donation Streamlit App]([https://local-food-donation.streamlit.app/])
+
 ---
 
 ## 🚀 Features
