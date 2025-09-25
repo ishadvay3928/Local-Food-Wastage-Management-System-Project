@@ -5,7 +5,7 @@
 A Streamlit-based dashboard to manage and analyze local food donations, now fully compatible with **SQLite**.
 The app allows users to view food listings, apply filters, contact providers, run analyses, and perform CRUD operations on Providers, Food Listings, and Claims.
 
-🔗 **Live App**: [Local Food Donation Streamlit App]([https://local-food-donation.streamlit.app/])
+🔗 **Live App**: [Local Food Donation Streamlit App](https://local-food-donation.streamlit.app/)
 
 ---
 
@@ -51,10 +51,14 @@ Manage data directly from the dashboard:
 
 ```
 Local-Food-Wastage-Management-System-Project/
-│── app.py                  # Main Streamlit application
-│── clean_datasets/          # CSV datasets (used if DB is empty)
-│── requirements.txt         # Python dependencies
-└── README.md               # Project documentation
+│── app.py                           # Main Streamlit application
+│── claims_clean_dataset.csv         # Claims CSV dataset
+│── food_listing_clean_dataset.csv   # Food listing CSV dataset
+│── providers_clean_dataset.csv      # Providers CSV dataset
+│── recievers_clean_dataset.csv      # Recievers CSV dataset
+│── local_food_donation.db           # SQLite Database
+│── requirements.txt                 # Python dependencies
+└── README.md                        # Project documentation
 ```
 
 ---
@@ -64,7 +68,7 @@ Local-Food-Wastage-Management-System-Project/
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/local-food-donation-dashboard.git
+git clone https://github.com/ishadvay3928/local-food-donation-dashboard.git
 cd local-food-donation-dashboard
 ```
 
@@ -141,7 +145,7 @@ streamlit run app.py
 
 ## 📦 Requirements
 
-`requirements.txt` example:
+`requirements.txt`
 
 ```
 streamlit
