@@ -153,7 +153,10 @@ plotly
 ## 📬 Contact
 
 **Isha Chaudhary**
+
 📧 [ishachaudhary3928@gmail.com](mailto:ishachaudhary3928@gmail.com)
+
 🔗 [LinkedIn](https://www.linkedin.com/in/ishachaudhary18)
+
 📍 Noida, India
 
